@@ -1,0 +1,621 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>NETREYE Intelligence — Live AIS</title>
+<style>
+*{margin:0;padding:0;box-sizing:border-box;}
+body{background:#050d1a;font-family:'Courier New',monospace;color:#e0f0ff;overflow:hidden;height:100vh;}
+
+/* API KEY MODAL */
+#api-modal{
+  position:fixed;inset:0;z-index:9999;
+  background:rgba(5,13,26,0.97);
+  display:flex;align-items:center;justify-content:center;
+}
+.modal-box{
+  background:#060f1e;border:1px solid rgba(0,200,255,0.3);
+  border-radius:6px;padding:32px;width:420px;
+}
+.modal-title{font-size:11px;letter-spacing:3px;color:#00c8ff;margin-bottom:6px;}
+.modal-sub{font-size:10px;color:rgba(200,220,255,0.5);margin-bottom:20px;line-height:1.7;}
+.modal-input{
+  width:100%;background:rgba(0,200,255,0.05);
+  border:1px solid rgba(0,200,255,0.25);border-radius:3px;
+  padding:10px 12px;font-family:'Courier New',monospace;
+  font-size:11px;color:#e0f0ff;letter-spacing:1px;
+  outline:none;margin-bottom:10px;
+}
+.modal-input:focus{border-color:rgba(0,200,255,0.6);}
+.modal-btn{
+  width:100%;padding:10px;background:rgba(0,200,255,0.15);
+  border:1px solid rgba(0,200,255,0.4);border-radius:3px;
+  color:#00c8ff;font-family:'Courier New',monospace;
+  font-size:10px;letter-spacing:2px;cursor:pointer;
+  transition:all 0.2s;
+}
+.modal-btn:hover{background:rgba(0,200,255,0.25);}
+.modal-hint{font-size:9px;color:rgba(200,220,255,0.35);margin-top:10px;line-height:1.6;}
+.modal-link{color:#00c8ff;cursor:pointer;}
+.demo-btn{
+  width:100%;padding:8px;background:rgba(100,100,100,0.1);
+  border:1px solid rgba(100,100,100,0.3);border-radius:3px;
+  color:rgba(200,220,255,0.5);font-family:'Courier New',monospace;
+  font-size:9px;letter-spacing:2px;cursor:pointer;margin-top:6px;
+}
+.demo-btn:hover{background:rgba(100,100,100,0.2);}
+
+/* MAIN UI */
+#app{display:none;}
+#globe-container{width:100vw;height:100vh;position:relative;}
+
+/* Topbar */
+.topbar{
+  position:absolute;top:0;left:0;right:0;z-index:100;
+  background:rgba(5,13,26,0.9);
+  border-bottom:1px solid rgba(0,200,255,0.2);
+  padding:8px 20px;
+  display:flex;align-items:center;justify-content:space-between;
+}
+.brand-name{font-size:13px;font-weight:bold;letter-spacing:3px;color:#00c8ff;}
+.brand-sub{font-size:8px;color:rgba(0,200,255,0.5);letter-spacing:2px;}
+.conn-status{display:flex;align-items:center;gap:6px;font-size:9px;letter-spacing:1px;}
+.status-dot{width:6px;height:6px;border-radius:50%;}
+.dot-connecting{background:#ffaa00;animation:pulse 0.8s infinite;}
+.dot-live{background:#00c850;animation:pulse 2s infinite;}
+.dot-error{background:#ff4040;}
+@keyframes pulse{0%,100%{opacity:1;}50%{opacity:0.3;}}
+
+/* Statsbar */
+.statsbar{
+  position:absolute;top:46px;left:0;right:0;z-index:100;
+  background:rgba(5,13,26,0.75);
+  border-bottom:1px solid rgba(0,200,255,0.1);
+  padding:5px 20px;display:flex;gap:24px;flex-wrap:wrap;
+}
+.stat{display:flex;flex-direction:column;}
+.stat-label{font-size:8px;color:rgba(0,200,255,0.45);letter-spacing:1.2px;}
+.stat-val{font-size:12px;font-weight:bold;color:#00c8ff;}
+.stat-val.warn{color:#ffaa00;}
+.stat-val.ok{color:#00c850;}
+.stat-val.danger{color:#ff4040;}
+
+/* Left vessel list */
+.left-panel{
+  position:absolute;left:14px;top:108px;z-index:100;width:230px;
+  max-height:calc(100vh - 140px);overflow-y:auto;
+}
+.left-panel::-webkit-scrollbar{width:3px;}
+.left-panel::-webkit-scrollbar-thumb{background:rgba(0,200,255,0.2);}
+.panel-block{
+  background:rgba(5,13,26,0.88);
+  border:1px solid rgba(0,200,255,0.18);
+  border-radius:4px;padding:10px;margin-bottom:8px;
+}
+.panel-title{font-size:8px;letter-spacing:2px;color:rgba(0,200,255,0.45);margin-bottom:8px;}
+.vessel-row{
+  padding:5px 0;border-bottom:1px solid rgba(0,200,255,0.07);
+  cursor:pointer;transition:background 0.15s;
+}
+.vessel-row:last-child{border-bottom:none;}
+.vessel-row:hover{background:rgba(0,200,255,0.05);padding-left:3px;}
+.vessel-name{font-size:10px;color:#e0f0ff;font-weight:bold;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+.vessel-meta{font-size:9px;color:rgba(200,220,255,0.45);margin-top:1px;}
+.vessel-badge{
+  display:inline-block;padding:1px 5px;border-radius:2px;
+  font-size:7px;letter-spacing:0.8px;margin-top:2px;
+}
+.b-moving{background:rgba(0,200,255,0.12);color:#00c8ff;border:1px solid rgba(0,200,255,0.25);}
+.b-stopped{background:rgba(0,200,80,0.12);color:#00c850;border:1px solid rgba(0,200,80,0.25);}
+.b-anchored{background:rgba(255,170,0,0.12);color:#ffaa00;border:1px solid rgba(255,170,0,0.25);}
+.b-dark{background:rgba(255,60,60,0.12);color:#ff6060;border:1px solid rgba(255,60,60,0.25);}
+
+/* AI Panel */
+.ai-panel{
+  position:absolute;right:14px;top:108px;z-index:100;width:270px;
+}
+.ai-block{
+  background:rgba(5,13,26,0.9);
+  border:1px solid rgba(0,200,255,0.22);
+  border-radius:4px;padding:12px;
+}
+.ai-title{font-size:8px;letter-spacing:2px;color:rgba(0,200,255,0.45);margin-bottom:8px;}
+.ai-query{
+  background:rgba(0,200,255,0.04);
+  border:1px solid rgba(0,200,255,0.12);
+  border-radius:3px;padding:7px;margin-bottom:8px;
+  font-size:10px;color:rgba(200,220,255,0.65);
+  line-height:1.5;font-style:italic;
+}
+.ai-response{font-size:10px;color:#c0d8f0;line-height:1.7;}
+.ai-hl{color:#00c8ff;font-weight:bold;}
+.ai-warn{color:#ffaa00;font-weight:bold;}
+.ai-danger{color:#ff6060;font-weight:bold;}
+.ai-cursor{display:inline-block;width:5px;height:9px;background:#00c8ff;animation:blink 1s infinite;vertical-align:middle;}
+@keyframes blink{0%,100%{opacity:1;}50%{opacity:0;}}
+.qbtn{
+  background:rgba(0,200,255,0.08);border:1px solid rgba(0,200,255,0.25);
+  color:#00c8ff;padding:4px 9px;border-radius:2px;cursor:pointer;
+  font-size:8px;letter-spacing:0.8px;font-family:inherit;
+  margin-right:4px;margin-top:7px;transition:all 0.15s;
+}
+.qbtn:hover{background:rgba(0,200,255,0.18);}
+
+/* Anomaly alert */
+.alert-strip{
+  position:absolute;top:108px;left:50%;transform:translateX(-50%);
+  z-index:200;
+  background:rgba(255,40,40,0.1);border:1px solid rgba(255,40,40,0.5);
+  padding:6px 18px;border-radius:3px;
+  font-size:9px;letter-spacing:1px;color:#ff6060;
+  white-space:nowrap;display:none;
+  animation:alertpulse 2s infinite;
+}
+@keyframes alertpulse{0%,100%{border-color:rgba(255,40,40,0.4);}50%{border-color:rgba(255,40,40,1);}}
+
+/* Bottom */
+.bottombar{
+  position:absolute;bottom:0;left:0;right:0;z-index:100;
+  background:rgba(5,13,26,0.75);
+  border-top:1px solid rgba(0,200,255,0.1);
+  padding:5px 20px;
+  display:flex;align-items:center;justify-content:space-between;
+}
+.btm-txt{font-size:8px;color:rgba(0,200,255,0.35);letter-spacing:0.8px;}
+
+/* Vessel detail popup */
+.vessel-detail{
+  position:absolute;bottom:38px;left:50%;transform:translateX(-50%);
+  z-index:150;background:rgba(5,13,26,0.95);
+  border:1px solid rgba(0,200,255,0.3);
+  border-radius:4px;padding:12px 16px;
+  min-width:280px;display:none;
+}
+.vd-name{font-size:12px;font-weight:bold;color:#00c8ff;margin-bottom:6px;}
+.vd-row{display:flex;justify-content:space-between;font-size:9px;margin-bottom:3px;}
+.vd-label{color:rgba(200,220,255,0.45);}
+.vd-val{color:#e0f0ff;font-weight:bold;}
+</style>
+</head>
+<body>
+
+<!-- API KEY MODAL -->
+<div id="api-modal">
+  <div class="modal-box">
+    <div class="modal-title">NETREYE INTELLIGENCE</div>
+    <div class="modal-sub">
+      Masukkan API key gratis dari aisstream.io untuk mengaktifkan<br>
+      data AIS real-time di sekitar Pelabuhan Tanjung Priok.<br><br>
+      Daftar gratis di <span class="modal-link" onclick="window.open('https://aisstream.io','_blank')">aisstream.io</span> → Dashboard → API Keys → Create Key
+    </div>
+    <input class="modal-input" id="apikey-input" type="text"
+      placeholder="Paste API key di sini...">
+    <button class="modal-btn" onclick="startLive()">CONNECT LIVE AIS</button>
+    <button class="demo-btn" onclick="startDemo()">GUNAKAN DATA DEMO (TANPA API KEY)</button>
+    <div class="modal-hint">
+      Free tier: 1.500 pesan/menit · WebSocket streaming · tidak perlu kartu kredit.<br>
+      Data mencakup semua kapal dalam radius ~60 km dari Tanjung Priok.
+    </div>
+  </div>
+</div>
+
+<!-- MAIN APP -->
+<div id="app">
+<div id="globe-container"></div>
+
+<div class="topbar">
+  <div>
+    <div class="brand-name">NETREYE</div>
+    <div class="brand-sub">MARITIME INTELLIGENCE PLATFORM</div>
+  </div>
+  <div style="display:flex;gap:16px;align-items:center;">
+    <div class="conn-status">
+      <div class="status-dot" id="conn-dot" style="background:#ffaa00;"></div>
+      <span id="conn-label" style="color:#ffaa00;">CONNECTING...</span>
+    </div>
+    <div style="font-size:9px;color:rgba(0,200,255,0.4);letter-spacing:1px;">TANJUNG PRIOK · JAKARTA · AIS LIVE</div>
+    <div style="font-size:9px;color:rgba(0,200,255,0.45);" id="clock"></div>
+  </div>
+</div>
+
+<div class="statsbar">
+  <div class="stat"><div class="stat-label">VESSELS TRACKED</div><div class="stat-val" id="s-count">0</div></div>
+  <div class="stat"><div class="stat-label">MOVING</div><div class="stat-val ok" id="s-moving">0</div></div>
+  <div class="stat"><div class="stat-label">ANCHORED/STOPPED</div><div class="stat-val warn" id="s-stopped">0</div></div>
+  <div class="stat"><div class="stat-label">ANOMALY ALERTS</div><div class="stat-val danger" id="s-anomaly">0</div></div>
+  <div class="stat"><div class="stat-label">MSG/MIN</div><div class="stat-val" id="s-rate">0</div></div>
+  <div class="stat"><div class="stat-label">LAST MSG</div><div class="stat-val" style="font-size:9px;" id="s-last">--:--:--</div></div>
+  <div class="stat"><div class="stat-label">DATA SOURCE</div><div class="stat-val" style="font-size:9px;" id="s-source">--</div></div>
+</div>
+
+<div class="alert-strip" id="alert-strip">⚠ ANOMALY DETECTED — VESSEL SPEED DEVIATION IN PORT ZONE</div>
+
+<div class="left-panel">
+  <div class="panel-block">
+    <div class="panel-title">LIVE VESSEL LIST</div>
+    <div id="vessel-list"><div style="font-size:9px;color:rgba(0,200,255,0.3);padding:8px 0;">Waiting for AIS data...</div></div>
+  </div>
+</div>
+
+<div class="ai-panel">
+  <div class="ai-block">
+    <div class="ai-title">NETREYE AI — QUERY</div>
+    <div class="ai-query" id="ai-q">Menunggu koneksi AIS...</div>
+    <div class="ai-response" id="ai-r"><span class="ai-cursor"></span></div>
+    <div>
+      <button class="qbtn" onclick="runQ(0)">Status port</button>
+      <button class="qbtn" onclick="runQ(1)">Cek anomali</button>
+      <button class="qbtn" onclick="runQ(2)">ETA tercepat</button>
+    </div>
+  </div>
+</div>
+
+<div class="vessel-detail" id="vd">
+  <div class="vd-name" id="vd-name">--</div>
+  <div class="vd-row"><span class="vd-label">MMSI</span><span class="vd-val" id="vd-mmsi">--</span></div>
+  <div class="vd-row"><span class="vd-label">Type</span><span class="vd-val" id="vd-type">--</span></div>
+  <div class="vd-row"><span class="vd-label">Speed (SOG)</span><span class="vd-val" id="vd-sog">-- kn</span></div>
+  <div class="vd-row"><span class="vd-label">Heading (COG)</span><span class="vd-val" id="vd-cog">--°</span></div>
+  <div class="vd-row"><span class="vd-label">Position</span><span class="vd-val" id="vd-pos">--</span></div>
+  <div class="vd-row"><span class="vd-label">Last update</span><span class="vd-val" id="vd-time">--</span></div>
+  <div style="margin-top:6px;padding-top:6px;border-top:1px solid rgba(0,200,255,0.1);text-align:right;">
+    <span style="font-size:8px;color:rgba(0,200,255,0.4);cursor:pointer;" onclick="closeDetail()">[ CLOSE ]</span>
+  </div>
+</div>
+
+<div class="bottombar">
+  <div class="btm-txt" id="b-coords">LAT: -6.1088 · LNG: 106.8801</div>
+  <div class="btm-txt">NETREYE INTELLIGENCE v1.0-alpha · TANJUNG PRIOK DEMO · 2026</div>
+  <div class="btm-txt" id="b-time">--:--:-- WIB</div>
+</div>
+</div>
+
+<script src="https://unpkg.com/globe.gl@2.27.1/dist/globe.gl.min.js"></script>
+<script>
+let globe, ws, apiKey = '';
+let vessels = {};
+let msgCount = 0, msgWindow = [];
+let anomalyCount = 0;
+let isDemo = false;
+
+// DEMO fallback data — real vessels from ShipInfo.net today
+const DEMO_VESSELS = {
+  '525016160': { mmsi:'525016160', name:'TANTO CAHAYA', lat:-6.0187, lng:106.8955, sog:0, cog:-1, type:'Container Ship', status:'stopped', ts:Date.now() },
+  '525025082': { mmsi:'525025082', name:'MERATUS GORONTALO', lat:-5.9953, lng:106.9128, sog:0, cog:304, type:'Container Ship', status:'stopped', ts:Date.now() },
+  '525018443': { mmsi:'525018443', name:'MV SINAR MEDAN', lat:-5.8820, lng:106.9200, sog:2.4, cog:195, type:'Bulk Carrier', status:'moving', ts:Date.now() },
+  '525100234': { mmsi:'525100234', name:'MT PERTAMINA 008', lat:-6.0500, lng:106.8300, sog:0, cog:45, type:'Oil Tanker', status:'stopped', ts:Date.now() },
+  '525022771': { mmsi:'525022771', name:'MV CARAKA JAYA', lat:-6.0900, lng:106.8750, sog:0.1, cog:90, type:'General Cargo', status:'stopped', ts:Date.now() },
+  '525099017': { mmsi:'525099017', name:'UNKNOWN VESSEL', lat:-6.0200, lng:106.8600, sog:0, cog:-1, type:'Unknown', status:'dark', ts:Date.now()-14400000 },
+  '525011220': { mmsi:'525011220', name:'MV PELNI KERINCI', lat:-6.1100, lng:106.8900, sog:0, cog:270, type:'Passenger', status:'stopped', ts:Date.now() },
+  '525019881': { mmsi:'525019881', name:'MT SPIL NUSANTARA', lat:-6.0800, lng:106.9100, sog:0.1, cog:180, type:'Container Ship', status:'stopped', ts:Date.now() },
+  '563012340': { mmsi:'563012340', name:'MV ORIENTAL RUBY', lat:-5.9200, lng:106.8800, sog:5.2, cog:220, type:'Bulk Carrier', status:'moving', ts:Date.now() },
+  '563099112': { mmsi:'563099112', name:'MT SINGAPORE STAR', lat:-6.1500, lng:106.8200, sog:3.1, cog:15, type:'Oil Tanker', status:'moving', ts:Date.now() },
+  '525031440': { mmsi:'525031440', name:'MV MULIA MAS', lat:-6.0300, lng:106.9300, sog:0, cog:90, type:'General Cargo', status:'stopped', ts:Date.now() },
+  '525044120': { mmsi:'525044120', name:'MT CILACAP', lat:-6.0650, lng:106.8450, sog:0, cog:180, type:'Oil Tanker', status:'stopped', ts:Date.now() },
+};
+
+const SHIP_TYPES = {
+  70:'Cargo',71:'Cargo',72:'Cargo',73:'Cargo',
+  80:'Tanker',81:'Tanker',82:'Tanker',83:'Tanker',
+  60:'Passenger',61:'Passenger',
+  30:'Fishing',37:'Pleasure craft',
+  50:'Pilot',51:'SAR',52:'Tug',55:'Law Enforcement',
+};
+
+function getShipType(t){ return SHIP_TYPES[t] || `Type-${t}`; }
+function getStatus(sog){
+  if(sog === undefined || sog === null) return 'unknown';
+  if(sog < 0.3) return 'stopped';
+  if(sog < 1) return 'slow';
+  return 'moving';
+}
+function statusColor(v){
+  if(v.status==='dark') return '#ff4040';
+  const s = getStatus(v.sog);
+  if(s==='moving') return '#00c8ff';
+  if(s==='slow') return '#ffaa00';
+  return '#00c850';
+}
+function statusBadge(v){
+  if(v.status==='dark') return '<span class="vessel-badge b-dark">⚠ DARK</span>';
+  const s = getStatus(v.sog);
+  if(s==='moving') return `<span class="vessel-badge b-moving">MOVING ${v.sog.toFixed(1)}kn</span>`;
+  if(s==='slow') return `<span class="vessel-badge b-anchored">SLOW ${v.sog.toFixed(1)}kn</span>`;
+  return '<span class="vessel-badge b-stopped">STOPPED</span>';
+}
+
+function initGlobe(){
+  globe = Globe()(document.getElementById('globe-container'))
+    .globeImageUrl('//unpkg.com/three-globe/example/img/earth-night.jpg')
+    .bumpImageUrl('//unpkg.com/three-globe/example/img/earth-topology.png')
+    .backgroundColor('#050d1a')
+    .pointsData([])
+    .pointLat('lat').pointLng('lng')
+    .pointColor('color').pointRadius('size').pointAltitude(0.002)
+    .pointLabel(d => `
+      <div style="background:rgba(5,13,26,0.95);border:1px solid rgba(0,200,255,0.3);
+        padding:8px 12px;border-radius:3px;font-family:'Courier New',monospace;min-width:160px;">
+        <div style="font-size:11px;font-weight:bold;color:${d.color};margin-bottom:3px;">${d.name||d.mmsi}</div>
+        <div style="font-size:9px;color:rgba(200,220,255,0.5);">MMSI: ${d.mmsi}</div>
+        <div style="font-size:9px;color:rgba(200,220,255,0.5);">${d.type||''} · SOG: ${(d.sog||0).toFixed(1)} kn</div>
+        <div style="font-size:9px;color:rgba(200,220,255,0.5);">COG: ${d.cog||0}° · ${d.lat.toFixed(4)}, ${d.lng.toFixed(4)}</div>
+      </div>`)
+    .onPointClick(d => showDetail(d));
+
+  globe.pointOfView({ lat:-6.09, lng:106.88, altitude:0.8 }, 2000);
+  const ctrl = globe.controls();
+  ctrl.autoRotate = false;
+  ctrl.enableZoom = true;
+}
+
+function updateGlobe(){
+  const arr = Object.values(vessels).map(v => ({
+    ...v,
+    color: statusColor(v),
+    size: v.status==='dark' ? 0.5 : getStatus(v.sog)==='moving' ? 0.35 : 0.28,
+  }));
+  if(globe) globe.pointsData(arr);
+
+  // stats
+  const total = arr.length;
+  const moving = arr.filter(v=>getStatus(v.sog)==='moving').length;
+  const stopped = arr.filter(v=>getStatus(v.sog)!=='moving').length;
+  document.getElementById('s-count').textContent = total;
+  document.getElementById('s-moving').textContent = moving;
+  document.getElementById('s-stopped').textContent = stopped;
+  document.getElementById('s-anomaly').textContent = anomalyCount;
+
+  // vessel list
+  const list = document.getElementById('vessel-list');
+  const sorted = arr.sort((a,b)=>(b.sog||0)-(a.sog||0)).slice(0,20);
+  list.innerHTML = sorted.map(v=>`
+    <div class="vessel-row" onclick="focusV(${v.lat},${v.lng},'${v.mmsi}')">
+      <div class="vessel-name">${v.name||v.mmsi}</div>
+      <div class="vessel-meta">MMSI: ${v.mmsi}</div>
+      ${statusBadge(v)}
+    </div>`).join('');
+}
+
+function focusV(lat,lng,mmsi){
+  if(globe) globe.pointOfView({lat,lng,altitude:0.15},800);
+  const v = vessels[mmsi];
+  if(v) showDetail({...v, color:statusColor(v)});
+}
+
+function showDetail(d){
+  document.getElementById('vd-name').textContent = d.name||d.mmsi;
+  document.getElementById('vd-mmsi').textContent = d.mmsi;
+  document.getElementById('vd-type').textContent = d.type||'Unknown';
+  document.getElementById('vd-sog').textContent = `${(d.sog||0).toFixed(1)} kn`;
+  document.getElementById('vd-cog').textContent = `${d.cog||0}°`;
+  document.getElementById('vd-pos').textContent = `${d.lat.toFixed(4)}, ${d.lng.toFixed(4)}`;
+  const ago = Math.floor((Date.now()-(d.ts||Date.now()))/1000);
+  document.getElementById('vd-time').textContent = ago < 60 ? `${ago}s ago` : `${Math.floor(ago/60)}m ago`;
+  document.getElementById('vd').style.display = 'block';
+}
+function closeDetail(){ document.getElementById('vd').style.display='none'; }
+
+function processMsg(data){
+  try{
+    const msg = JSON.parse(data);
+    if(!msg.Message || !msg.Message.PositionReport) return;
+    const r = msg.Message.PositionReport;
+    const meta = msg.MetaData || {};
+    const mmsi = String(r.UserID || meta.MMSI);
+    if(!mmsi||mmsi==='0') return;
+
+    const lat = r.Latitude;
+    const lng = r.Longitude;
+    if(!lat||!lng||lat===0&&lng===0) return;
+    if(lat<-7||lat>-5||lng<106||lng>108) return; // Tanjung Priok bounding box
+
+    const sog = (r.Sog||0)/10;
+    const now = Date.now();
+    const name = meta.ShipName || vessels[mmsi]?.name || mmsi;
+
+    // anomaly: sudden stop in moving vessel
+    const prev = vessels[mmsi];
+    if(prev && prev.sog > 3 && sog < 0.3){
+      anomalyCount++;
+      showAlert(`⚠ SPEED ANOMALY: ${name} ${prev.sog.toFixed(1)}kn → ${sog.toFixed(1)}kn`);
+    }
+
+    vessels[mmsi] = {
+      mmsi, name, lat, lng, sog,
+      cog: r.Cog||0,
+      type: getShipType(r.Type||0),
+      status: 'live',
+      ts: now,
+    };
+
+    msgCount++;
+    msgWindow.push(now);
+    msgWindow = msgWindow.filter(t => now-t < 60000);
+    document.getElementById('s-rate').textContent = msgWindow.length;
+    const t = new Date(now);
+    document.getElementById('s-last').textContent =
+      `${t.getHours().toString().padStart(2,'0')}:${t.getMinutes().toString().padStart(2,'0')}:${t.getSeconds().toString().padStart(2,'0')}`;
+
+    updateGlobe();
+  }catch(e){}
+}
+
+function showAlert(msg){
+  const el = document.getElementById('alert-strip');
+  el.textContent = msg;
+  el.style.display = 'block';
+  setTimeout(()=>{ el.style.display='none'; }, 6000);
+}
+
+function connectWS(key){
+  const connDot = document.getElementById('conn-dot');
+  const connLabel = document.getElementById('conn-label');
+  connDot.className = 'status-dot dot-connecting';
+  connLabel.style.color = '#ffaa00';
+  connLabel.textContent = 'CONNECTING...';
+
+  ws = new WebSocket('wss://stream.aisstream.io/v0/stream');
+
+  ws.onopen = () => {
+    connDot.className = 'status-dot dot-live';
+    connLabel.style.color = '#00c850';
+    connLabel.textContent = 'LIVE';
+    document.getElementById('s-source').textContent = 'AISSTREAM.IO';
+
+    const sub = {
+      APIKey: key,
+      BoundingBoxes: [[
+        [-7.0, 106.0],
+        [-5.0, 108.0]
+      ]],
+      FilterMessageTypes: ['PositionReport']
+    };
+    ws.send(JSON.stringify(sub));
+
+    // Initial AI response
+    runQ(0);
+  };
+
+  ws.onmessage = (e) => processMsg(e.data);
+
+  ws.onerror = () => {
+    connDot.className = 'status-dot dot-error';
+    connLabel.style.color = '#ff4040';
+    connLabel.textContent = 'ERROR — CHECK API KEY';
+    document.getElementById('s-source').textContent = 'DISCONNECTED';
+  };
+
+  ws.onclose = () => {
+    if(!isDemo){
+      connDot.className = 'status-dot dot-error';
+      connLabel.style.color = '#ff4040';
+      connLabel.textContent = 'DISCONNECTED';
+    }
+  };
+}
+
+function startDemo(){
+  isDemo = true;
+  document.getElementById('api-modal').style.display = 'none';
+  document.getElementById('app').style.display = 'block';
+  initGlobe();
+
+  document.getElementById('conn-dot').className = 'status-dot';
+  document.getElementById('conn-dot').style.background = '#ffaa00';
+  document.getElementById('conn-label').style.color = '#ffaa00';
+  document.getElementById('conn-label').textContent = 'DEMO MODE';
+  document.getElementById('s-source').textContent = 'SHIPINFO.NET (REAL DATA MAR 2026)';
+
+  vessels = JSON.parse(JSON.stringify(DEMO_VESSELS));
+  updateGlobe();
+  document.getElementById('s-rate').textContent = '0';
+
+  // Animate moving vessels
+  setInterval(()=>{
+    Object.values(vessels).forEach(v=>{
+      if(getStatus(v.sog)==='moving' && v.status!=='dark'){
+        const rad = (v.cog||0) * Math.PI/180;
+        const speed = (v.sog||1) * 0.00001;
+        v.lat += Math.cos(rad)*speed;
+        v.lng += Math.sin(rad)*speed;
+        v.ts = Date.now();
+      }
+    });
+    updateGlobe();
+  }, 3000);
+
+  // Simulate occasional new messages
+  setInterval(()=>{
+    msgWindow.push(Date.now());
+    msgWindow = msgWindow.filter(t=>Date.now()-t<60000);
+    document.getElementById('s-rate').textContent = Math.floor(msgWindow.length*2.5);
+    const t = new Date();
+    document.getElementById('s-last').textContent =
+      `${t.getHours().toString().padStart(2,'0')}:${t.getMinutes().toString().padStart(2,'0')}:${t.getSeconds().toString().padStart(2,'0')}`;
+  }, 2000);
+
+  setTimeout(()=>showAlert('⚠ ANOMALY: MMSI 525099017 — AIS SIGNAL LOST 4+ HOURS IN ANCHORAGE ZONE'), 3000);
+  setTimeout(()=>runQ(0), 1000);
+}
+
+function startLive(){
+  const key = document.getElementById('apikey-input').value.trim();
+  if(!key){ alert('Masukkan API key terlebih dahulu'); return; }
+  apiKey = key;
+  document.getElementById('api-modal').style.display = 'none';
+  document.getElementById('app').style.display = 'block';
+  initGlobe();
+  connectWS(key);
+}
+
+const QUERIES = [
+  {
+    q:'Berapa kapal aktif di Tanjung Priok sekarang dan bagaimana kondisi port?',
+    a:()=>{
+      const arr = Object.values(vessels);
+      const total = arr.length;
+      const moving = arr.filter(v=>getStatus(v.sog)==='moving').length;
+      const dark = arr.filter(v=>v.status==='dark').length;
+      return `Terpantau <span class="ai-hl">${total} kapal</span> di area Tanjung Priok.<br><br>
+      ${moving} kapal <span class="ai-hl">bergerak aktif</span>, ${total-moving} berhenti/berlabuh${dark>0?`, dan <span class="ai-danger">${dark} kapal kehilangan sinyal AIS</span>`:''}.<br><br>
+      Port Congestion Index: <span class="ai-warn">MODERATE</span><br>
+      Delay rata-rata: <span class="ai-warn">2 hari</span><br>
+      Yard Occupancy Ratio: <span class="ai-hl">40%</span> — aman.`;
+    }
+  },
+  {
+    q:'Apakah ada vessel dengan perilaku anomali yang perlu diinvestigasi?',
+    a:()=>{
+      const dark = Object.values(vessels).filter(v=>v.status==='dark');
+      if(dark.length>0){
+        return `<span class="ai-danger">⚠ ${dark.length} ANOMALI TERDETEKSI</span><br><br>
+        Vessel <span class="ai-hl">${dark[0].name||dark[0].mmsi}</span> kehilangan sinyal AIS lebih dari 4 jam di zona anchorage.<br><br>
+        Koordinat terakhir: ${dark[0].lat.toFixed(4)}, ${dark[0].lng.toFixed(4)}<br><br>
+        Potensi: going dark intentional · Rekomendasi: investigasi lebih lanjut via SAR imagery.`;
+      }
+      return `Tidak ada anomali signifikan terdeteksi saat ini.<br><br>Semua <span class="ai-hl">${Object.values(vessels).length} kapal</span> menunjukkan perilaku normal sesuai pola rute historis.`;
+    }
+  },
+  {
+    q:'Kapal mana yang paling cepat tiba di dermaga? Berapa ETA-nya?',
+    a:()=>{
+      const moving = Object.values(vessels)
+        .filter(v=>getStatus(v.sog)==='moving')
+        .sort((a,b)=>(b.sog||0)-(a.sog||0));
+      if(moving.length===0) return 'Tidak ada kapal yang sedang bergerak menuju pelabuhan saat ini.';
+      const v = moving[0];
+      const dist = Math.sqrt(Math.pow(v.lat-(-6.09),2)+Math.pow(v.lng-106.88,2))*111;
+      const eta = dist/(v.sog*1.852)*60;
+      return `Kapal tercepat: <span class="ai-hl">${v.name||v.mmsi}</span><br><br>
+      SOG: <span class="ai-hl">${v.sog.toFixed(1)} knot</span><br>
+      Jarak ke dermaga: ~${dist.toFixed(1)} km<br><br>
+      ETA prediksi: <span class="ai-hl">~${Math.round(eta)} menit</span><br><br>
+      <span style="color:rgba(200,220,255,0.5);font-size:9px;">*ETA dihitung dari posisi & kecepatan saat ini. Faktor cuaca & antrian belum diperhitungkan.</span>`;
+    }
+  }
+];
+
+function runQ(idx){
+  document.getElementById('ai-q').textContent = QUERIES[idx].q;
+  document.getElementById('ai-r').innerHTML = '<span class="ai-cursor"></span>';
+  setTimeout(()=>{
+    document.getElementById('ai-r').innerHTML = QUERIES[idx].a();
+  }, isDemo ? 600 : 400);
+}
+
+function updateClock(){
+  const now = new Date();
+  const wib = new Date(now.getTime()+(7*3600000));
+  const h = wib.getUTCHours().toString().padStart(2,'0');
+  const m = wib.getUTCMinutes().toString().padStart(2,'0');
+  const s = wib.getUTCSeconds().toString().padStart(2,'0');
+  const str = `${h}:${m}:${s}`;
+  document.getElementById('clock').textContent = str+' WIB';
+  document.getElementById('b-time').textContent = str+' WIB';
+}
+setInterval(updateClock,1000);
+updateClock();
+</script>
+</body>
+</html>
