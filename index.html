@@ -7,100 +7,39 @@
 <style>
 *{margin:0;padding:0;box-sizing:border-box;}
 body{background:#050d1a;font-family:'Courier New',monospace;color:#e0f0ff;overflow:hidden;height:100vh;}
-
-/* LIVE CONNECT PANEL */
-#live-panel{
-  position:fixed;inset:0;z-index:9999;
-  background:rgba(5,13,26,0.92);
-  display:none;align-items:center;justify-content:center;
-}
-.lp-box{
-  background:#060f1e;border:1px solid rgba(0,200,255,0.3);
-  border-radius:8px;padding:28px;width:380px;
-}
+#live-panel{position:fixed;inset:0;z-index:9999;background:rgba(5,13,26,0.93);display:none;align-items:center;justify-content:center;}
+.lp-box{background:#060f1e;border:1px solid rgba(0,200,255,0.3);border-radius:8px;padding:28px;width:380px;}
 .lp-title{font-size:10px;letter-spacing:3px;color:#00c8ff;margin-bottom:6px;}
 .lp-sub{font-size:10px;color:rgba(200,220,255,0.5);margin-bottom:16px;line-height:1.7;}
-.lp-input{
-  width:100%;background:rgba(0,200,255,0.05);
-  border:1px solid rgba(0,200,255,0.25);border-radius:4px;
-  padding:10px 12px;font-family:'Courier New',monospace;
-  font-size:11px;color:#e0f0ff;outline:none;margin-bottom:8px;
-}
+.lp-input{width:100%;background:rgba(0,200,255,0.05);border:1px solid rgba(0,200,255,0.25);border-radius:4px;padding:10px 12px;font-family:'Courier New',monospace;font-size:11px;color:#e0f0ff;outline:none;margin-bottom:8px;}
 .lp-input:focus{border-color:rgba(0,200,255,0.6);}
-.lp-btn{
-  width:100%;padding:9px;background:rgba(0,200,255,0.15);
-  border:1px solid rgba(0,200,255,0.4);border-radius:4px;
-  color:#00c8ff;font-family:'Courier New',monospace;
-  font-size:10px;letter-spacing:2px;cursor:pointer;transition:all 0.2s;
-}
+.lp-btn{width:100%;padding:9px;background:rgba(0,200,255,0.15);border:1px solid rgba(0,200,255,0.4);border-radius:4px;color:#00c8ff;font-family:'Courier New',monospace;font-size:10px;letter-spacing:2px;cursor:pointer;transition:all 0.2s;}
 .lp-btn:hover{background:rgba(0,200,255,0.25);}
-.lp-cancel{
-  width:100%;padding:7px;background:transparent;
-  border:1px solid rgba(100,100,100,0.3);border-radius:4px;
-  color:rgba(200,220,255,0.4);font-family:'Courier New',monospace;
-  font-size:9px;letter-spacing:1px;cursor:pointer;margin-top:6px;
-}
+.lp-cancel{width:100%;padding:7px;background:transparent;border:1px solid rgba(100,100,100,0.3);border-radius:4px;color:rgba(200,220,255,0.4);font-family:'Courier New',monospace;font-size:9px;letter-spacing:1px;cursor:pointer;margin-top:6px;}
+.lp-err{margin-top:10px;padding:8px;background:rgba(255,60,60,0.06);border:1px solid rgba(255,60,60,0.25);border-radius:4px;font-size:9px;color:rgba(255,180,180,0.8);line-height:1.6;display:none;}
 .lp-hint{font-size:9px;color:rgba(200,220,255,0.3);margin-top:10px;line-height:1.6;}
 .lp-link{color:#00c8ff;text-decoration:none;}
-
-/* TOPBAR */
-.topbar{
-  position:absolute;top:0;left:0;right:0;z-index:100;
-  background:rgba(5,13,26,0.9);
-  border-bottom:1px solid rgba(0,200,255,0.18);
-  padding:8px 16px;
-  display:flex;align-items:center;justify-content:space-between;
-}
+.topbar{position:absolute;top:0;left:0;right:0;z-index:100;background:rgba(5,13,26,0.9);border-bottom:1px solid rgba(0,200,255,0.18);padding:8px 16px;display:flex;align-items:center;justify-content:space-between;}
 .brand{display:flex;align-items:center;gap:10px;}
 .brand-dot{width:7px;height:7px;background:#00c8ff;border-radius:50%;animation:pulse 2s infinite;}
 .brand-name{font-size:13px;font-weight:bold;letter-spacing:3px;color:#00c8ff;}
 .brand-sub{font-size:8px;color:rgba(0,200,255,0.5);letter-spacing:2px;}
 .top-right{display:flex;align-items:center;gap:10px;}
-.conn-badge{
-  display:flex;align-items:center;gap:5px;
-  padding:4px 10px;border-radius:3px;cursor:pointer;
-  border:1px solid rgba(0,200,255,0.2);
-  font-size:9px;letter-spacing:1px;transition:all 0.2s;
-}
+.conn-badge{display:flex;align-items:center;gap:5px;padding:4px 10px;border-radius:3px;cursor:pointer;border:1px solid rgba(0,200,255,0.2);font-size:9px;letter-spacing:1px;transition:all 0.2s;}
 .conn-badge:hover{border-color:rgba(0,200,255,0.5);}
 .conn-dot{width:5px;height:5px;border-radius:50%;}
-.dot-demo{background:#ffaa00;animation:pulse 3s infinite;}
-.dot-live{background:#00c850;animation:pulse 1.5s infinite;}
-.dot-err{background:#ff4040;}
 @keyframes pulse{0%,100%{opacity:1;}50%{opacity:0.3;}}
-.clock{font-size:9px;color:rgba(0,200,255,0.4);letter-spacing:1px;}
-
-/* STATSBAR */
-.statsbar{
-  position:absolute;top:44px;left:0;right:0;z-index:100;
-  background:rgba(5,13,26,0.75);
-  border-bottom:1px solid rgba(0,200,255,0.08);
-  padding:5px 16px;display:flex;gap:20px;flex-wrap:wrap;
-}
+.statsbar{position:absolute;top:44px;left:0;right:0;z-index:100;background:rgba(5,13,26,0.75);border-bottom:1px solid rgba(0,200,255,0.08);padding:5px 16px;display:flex;gap:20px;flex-wrap:wrap;}
 .stat{display:flex;flex-direction:column;}
 .stat-lbl{font-size:7px;color:rgba(0,200,255,0.4);letter-spacing:1.2px;}
 .stat-val{font-size:12px;font-weight:bold;color:#00c8ff;}
-.sv-warn{color:#ffaa00;}
-.sv-ok{color:#00c850;}
-.sv-err{color:#ff4040;}
-
-/* LEFT PANEL */
-.left-panel{
-  position:absolute;left:12px;top:104px;z-index:100;width:224px;
-  max-height:calc(100vh - 130px);overflow-y:auto;
-}
+.sv-ok{color:#00c850;}.sv-warn{color:#ffaa00;}.sv-err{color:#ff4040;}
+.left-panel{position:absolute;left:12px;top:104px;z-index:100;width:224px;max-height:calc(100vh - 130px);overflow-y:auto;}
 .left-panel::-webkit-scrollbar{width:3px;}
 .left-panel::-webkit-scrollbar-thumb{background:rgba(0,200,255,0.15);}
-.pblock{
-  background:rgba(5,13,26,0.88);
-  border:1px solid rgba(0,200,255,0.15);
-  border-radius:4px;padding:10px;margin-bottom:8px;
-}
+.pblock{background:rgba(5,13,26,0.88);border:1px solid rgba(0,200,255,0.15);border-radius:4px;padding:10px;margin-bottom:8px;}
 .ptitle{font-size:7px;letter-spacing:2px;color:rgba(0,200,255,0.4);margin-bottom:8px;}
-.vrow{
-  padding:5px 0;border-bottom:1px solid rgba(0,200,255,0.06);
-  cursor:pointer;transition:padding 0.15s;
-}
+.vrow{padding:5px 0;border-bottom:1px solid rgba(0,200,255,0.06);cursor:pointer;transition:padding 0.15s;}
 .vrow:last-child{border-bottom:none;}
 .vrow:hover{padding-left:4px;}
 .vname{font-size:10px;color:#e0f0ff;font-weight:bold;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
@@ -110,98 +49,58 @@ body{background:#050d1a;font-family:'Courier New',monospace;color:#e0f0ff;overfl
 .bs{background:rgba(0,200,80,0.1);color:#00c850;border:1px solid rgba(0,200,80,0.2);}
 .ba{background:rgba(255,170,0,0.1);color:#ffaa00;border:1px solid rgba(255,170,0,0.2);}
 .bd{background:rgba(255,60,60,0.1);color:#ff6060;border:1px solid rgba(255,60,60,0.2);}
-
-/* AI PANEL */
 .ai-panel{position:absolute;right:12px;top:104px;z-index:100;width:264px;}
-.aiblock{
-  background:rgba(5,13,26,0.9);
-  border:1px solid rgba(0,200,255,0.18);
-  border-radius:4px;padding:12px;
-}
+.aiblock{background:rgba(5,13,26,0.9);border:1px solid rgba(0,200,255,0.18);border-radius:4px;padding:12px;}
 .aititle{font-size:7px;letter-spacing:2px;color:rgba(0,200,255,0.4);margin-bottom:8px;}
-.aiq{
-  background:rgba(0,200,255,0.03);border:1px solid rgba(0,200,255,0.1);
-  border-radius:3px;padding:7px;margin-bottom:8px;
-  font-size:10px;color:rgba(200,220,255,0.6);line-height:1.5;font-style:italic;
-}
+.aiq{background:rgba(0,200,255,0.03);border:1px solid rgba(0,200,255,0.1);border-radius:3px;padding:7px;margin-bottom:8px;font-size:10px;color:rgba(200,220,255,0.6);line-height:1.5;font-style:italic;}
 .air{font-size:10px;color:#c0d8f0;line-height:1.7;}
-.hl{color:#00c8ff;font-weight:bold;}
-.wn{color:#ffaa00;font-weight:bold;}
-.er{color:#ff6060;font-weight:bold;}
+.hl{color:#00c8ff;font-weight:bold;}.wn{color:#ffaa00;font-weight:bold;}.er{color:#ff6060;font-weight:bold;}
 .acursor{display:inline-block;width:5px;height:9px;background:#00c8ff;animation:blink 1s infinite;vertical-align:middle;}
 @keyframes blink{0%,100%{opacity:1;}50%{opacity:0;}}
-.qbtn{
-  background:rgba(0,200,255,0.07);border:1px solid rgba(0,200,255,0.2);
-  color:#00c8ff;padding:4px 8px;border-radius:2px;cursor:pointer;
-  font-size:8px;letter-spacing:0.7px;font-family:inherit;
-  margin-right:4px;margin-top:7px;transition:all 0.15s;
-}
+.qbtn{background:rgba(0,200,255,0.07);border:1px solid rgba(0,200,255,0.2);color:#00c8ff;padding:4px 8px;border-radius:2px;cursor:pointer;font-size:8px;letter-spacing:0.7px;font-family:inherit;margin-right:4px;margin-top:7px;transition:all 0.15s;}
 .qbtn:hover{background:rgba(0,200,255,0.18);}
-
-/* ANOMALY ALERT */
-.alert-strip{
-  position:absolute;top:104px;left:50%;transform:translateX(-50%);z-index:200;
-  background:rgba(255,40,40,0.08);border:1px solid rgba(255,40,40,0.45);
-  padding:6px 16px;border-radius:3px;
-  font-size:9px;letter-spacing:1px;color:#ff6060;white-space:nowrap;
-  display:none;animation:alertp 2s infinite;
-}
+.alert-strip{position:absolute;top:104px;left:50%;transform:translateX(-50%);z-index:200;background:rgba(255,40,40,0.08);border:1px solid rgba(255,40,40,0.45);padding:6px 16px;border-radius:3px;font-size:9px;letter-spacing:1px;color:#ff6060;white-space:nowrap;display:none;animation:alertp 2s infinite;}
 @keyframes alertp{0%,100%{border-color:rgba(255,40,40,0.3);}50%{border-color:rgba(255,40,40,0.9);}}
-
-/* VESSEL DETAIL */
-.vdetail{
-  position:absolute;bottom:36px;left:50%;transform:translateX(-50%);z-index:150;
-  background:rgba(5,13,26,0.95);border:1px solid rgba(0,200,255,0.25);
-  border-radius:4px;padding:12px 16px;min-width:260px;display:none;
-}
+.vdetail{position:absolute;bottom:36px;left:50%;transform:translateX(-50%);z-index:150;background:rgba(5,13,26,0.95);border:1px solid rgba(0,200,255,0.25);border-radius:4px;padding:12px 16px;min-width:260px;display:none;}
 .vdname{font-size:12px;font-weight:bold;color:#00c8ff;margin-bottom:6px;}
 .vdrow{display:flex;justify-content:space-between;font-size:9px;margin-bottom:3px;}
-.vdlbl{color:rgba(200,220,255,0.4);}
-.vdval{color:#e0f0ff;font-weight:bold;}
-
-/* BOTTOMBAR */
-.bottombar{
-  position:absolute;bottom:0;left:0;right:0;z-index:100;
-  background:rgba(5,13,26,0.75);border-top:1px solid rgba(0,200,255,0.08);
-  padding:5px 16px;display:flex;align-items:center;justify-content:space-between;
-}
+.vdlbl{color:rgba(200,220,255,0.4);}.vdval{color:#e0f0ff;font-weight:bold;}
+.bottombar{position:absolute;bottom:0;left:0;right:0;z-index:100;background:rgba(5,13,26,0.75);border-top:1px solid rgba(0,200,255,0.08);padding:5px 16px;display:flex;align-items:center;justify-content:space-between;}
 .btxt{font-size:8px;color:rgba(0,200,255,0.3);letter-spacing:0.7px;}
+#dbg{position:absolute;bottom:36px;right:12px;z-index:200;background:rgba(5,13,26,0.97);border:1px solid rgba(0,200,255,0.15);border-radius:4px;padding:8px;width:280px;font-size:8px;line-height:1.7;max-height:140px;overflow-y:auto;display:none;}
 </style>
 </head>
 <body>
 
-<!-- LIVE CONNECT PANEL (hidden by default) -->
 <div id="live-panel">
   <div class="lp-box">
-    <div class="lp-title">CONNECT LIVE AIS</div>
+    <div class="lp-title">CONNECT LIVE AIS — AISSTREAM.IO</div>
     <div class="lp-sub">
-      Masukkan API key gratis dari aisstream.io untuk data vessel real-time.<br>
-      Daftar gratis di <a class="lp-link" href="https://aisstream.io" target="_blank">aisstream.io</a> → Dashboard → API Keys → Create
+      Daftar gratis di <a class="lp-link" href="https://aisstream.io" target="_blank">aisstream.io</a><br>
+      → Sign up → Dashboard → API Keys → Create New Key → Copy
     </div>
-    <input class="lp-input" id="apikey-input" type="text" placeholder="Paste API key...">
+    <input class="lp-input" id="apikey-input" type="text" placeholder="Paste API key di sini...">
     <button class="lp-btn" onclick="connectLive()">CONNECT LIVE AIS</button>
     <button class="lp-cancel" onclick="closeLivePanel()">TETAP DI DEMO MODE</button>
-    <div class="lp-hint">Free tier: 1.500 msg/min · WebSocket · tidak perlu kartu kredit</div>
+    <div class="lp-err" id="lp-err"></div>
+    <div class="lp-hint">Free tier · tidak perlu kartu kredit · auto-reconnect aktif</div>
   </div>
 </div>
 
-<!-- MAIN APP -->
 <div id="globe-container"></div>
 
 <div class="topbar">
   <div class="brand">
     <div class="brand-dot"></div>
-    <div>
-      <div class="brand-name">NETREYE</div>
-      <div class="brand-sub">MARITIME INTELLIGENCE PLATFORM</div>
-    </div>
+    <div><div class="brand-name">NETREYE</div><div class="brand-sub">MARITIME INTELLIGENCE PLATFORM</div></div>
   </div>
   <div class="top-right">
-    <div class="conn-badge" id="conn-badge" onclick="openLivePanel()" title="Klik untuk connect live AIS">
-      <div class="conn-dot dot-demo" id="conn-dot"></div>
+    <div class="conn-badge" id="conn-badge" onclick="openLivePanel()">
+      <div class="conn-dot" id="conn-dot" style="background:#ffaa00;animation:pulse 3s infinite;"></div>
       <span id="conn-label">DEMO MODE</span>
     </div>
-    <div class="clock" id="clock">--:--:-- WIB</div>
+    <span style="font-size:8px;color:rgba(0,200,255,0.2);cursor:pointer;" onclick="toggleDbg()">[LOG]</span>
+    <div class="btxt" id="clock">--:--:-- WIB</div>
   </div>
 </div>
 
@@ -212,10 +111,10 @@ body{background:#050d1a;font-family:'Courier New',monospace;color:#e0f0ff;overfl
   <div class="stat"><div class="stat-lbl">ANOMALY ALERTS</div><div class="stat-val sv-err" id="s-anomaly">0</div></div>
   <div class="stat"><div class="stat-lbl">MSG/MIN</div><div class="stat-val" id="s-rate">0</div></div>
   <div class="stat"><div class="stat-lbl">LAST MSG</div><div class="stat-val" style="font-size:9px;" id="s-last">--:--:--</div></div>
-  <div class="stat"><div class="stat-lbl">DATA SOURCE</div><div class="stat-val" style="font-size:9px;" id="s-source">DEMO</div></div>
+  <div class="stat"><div class="stat-lbl">SOURCE</div><div class="stat-val" style="font-size:9px;" id="s-source">DEMO</div></div>
 </div>
 
-<div class="alert-strip" id="alert-strip">⚠ ANOMALY DETECTED</div>
+<div class="alert-strip" id="alert-strip"></div>
 
 <div class="left-panel">
   <div class="pblock">
@@ -225,18 +124,14 @@ body{background:#050d1a;font-family:'Courier New',monospace;color:#e0f0ff;overfl
   <div class="pblock">
     <div class="ptitle">PORT CONGESTION INDEX</div>
     <div style="font-size:20px;font-weight:bold;color:#ffaa00;margin-bottom:4px;">MODERATE</div>
-    <div style="font-size:8px;color:rgba(200,220,255,0.45);line-height:1.7;">
-      95 vessels in port · Avg wait: 2 days<br>
-      YOR: 40% (safe &lt; 65%)<br>
-      <span style="color:#00c850;">Normal Eid period ops</span>
-    </div>
+    <div style="font-size:8px;color:rgba(200,220,255,0.45);line-height:1.7;">95 vessels · Avg wait: 2 days<br>YOR: 40% (safe &lt; 65%)<br><span style="color:#00c850;">Normal Eid ops</span></div>
   </div>
 </div>
 
 <div class="ai-panel">
   <div class="aiblock">
     <div class="aititle">NETREYE AI — NATURAL LANGUAGE QUERY</div>
-    <div class="aiq" id="ai-q">Berapa kapal aktif di Tanjung Priok dan bagaimana kondisi port?</div>
+    <div class="aiq" id="ai-q">Berapa kapal aktif di Tanjung Priok sekarang?</div>
     <div class="air" id="ai-r"><span class="acursor"></span></div>
     <div>
       <button class="qbtn" onclick="runQ(0)">Status port</button>
@@ -246,381 +141,253 @@ body{background:#050d1a;font-family:'Courier New',monospace;color:#e0f0ff;overfl
   </div>
 </div>
 
+<div id="dbg"></div>
+
 <div class="vdetail" id="vd">
   <div class="vdname" id="vd-name"></div>
   <div class="vdrow"><span class="vdlbl">MMSI</span><span class="vdval" id="vd-mmsi"></span></div>
   <div class="vdrow"><span class="vdlbl">Type</span><span class="vdval" id="vd-type"></span></div>
-  <div class="vdrow"><span class="vdlbl">Speed (SOG)</span><span class="vdval" id="vd-sog"></span></div>
-  <div class="vdrow"><span class="vdlbl">Heading (COG)</span><span class="vdval" id="vd-cog"></span></div>
+  <div class="vdrow"><span class="vdlbl">SOG</span><span class="vdval" id="vd-sog"></span></div>
+  <div class="vdrow"><span class="vdlbl">COG</span><span class="vdval" id="vd-cog"></span></div>
   <div class="vdrow"><span class="vdlbl">Position</span><span class="vdval" id="vd-pos"></span></div>
-  <div class="vdrow"><span class="vdlbl">Last update</span><span class="vdval" id="vd-time"></span></div>
+  <div class="vdrow"><span class="vdlbl">Updated</span><span class="vdval" id="vd-time"></span></div>
   <div style="margin-top:6px;padding-top:6px;border-top:1px solid rgba(0,200,255,0.1);text-align:right;">
     <span style="font-size:8px;color:rgba(0,200,255,0.35);cursor:pointer;" onclick="document.getElementById('vd').style.display='none'">[ CLOSE ]</span>
   </div>
 </div>
 
 <div class="bottombar">
-  <div class="btxt">LAT: -6.1088° · LNG: 106.8801° · TANJUNG PRIOK, JAKARTA</div>
-  <div class="btxt">NETREYE INTELLIGENCE v1.0-alpha · © 2026</div>
+  <div class="btxt">TANJUNG PRIOK · JAKARTA · -6.1088° 106.8801°</div>
+  <div class="btxt">NETREYE INTELLIGENCE v1.0-alpha · 2026</div>
   <div class="btxt" id="b-time">--:--:-- WIB</div>
 </div>
 
 <script src="https://unpkg.com/globe.gl@2.27.1/dist/globe.gl.min.js"></script>
 <script>
-// ─── STATE ───────────────────────────────────────────────────────────────
-let globe, ws;
-let vessels = {};
-let anomalyCount = 0;
-let msgWindow = [];
-let isLive = false;
+let globe, ws, apiKey='', isLive=false, reconnectTimer=null;
+let vessels={}, anomalyCount=0, msgWindow=[], logLines=[];
 
-// ─── DEMO DATA (real vessels from ShipInfo.net March 2026) ───────────────
-const DEMO = {
-  '525016160': { mmsi:'525016160', name:'TANTO CAHAYA',      lat:-6.0187, lng:106.8955, sog:0,   cog:0,   type:'Container Ship', ts:Date.now() },
-  '525025082': { mmsi:'525025082', name:'MERATUS GORONTALO', lat:-5.9953, lng:106.9128, sog:0,   cog:304, type:'Container Ship', ts:Date.now() },
-  '525018443': { mmsi:'525018443', name:'MV SINAR MEDAN',    lat:-5.8820, lng:106.9200, sog:2.4, cog:195, type:'Bulk Carrier',   ts:Date.now() },
-  '525100234': { mmsi:'525100234', name:'MT PERTAMINA 008',  lat:-6.0500, lng:106.8300, sog:0,   cog:45,  type:'Oil Tanker',     ts:Date.now() },
-  '525022771': { mmsi:'525022771', name:'MV CARAKA JAYA',    lat:-6.0900, lng:106.8750, sog:0.1, cog:90,  type:'General Cargo',  ts:Date.now() },
-  '525099017': { mmsi:'525099017', name:'UNKNOWN VESSEL',    lat:-6.0200, lng:106.8600, sog:0,   cog:0,   type:'Unknown',        ts:Date.now()-14400000, dark:true },
-  '525011220': { mmsi:'525011220', name:'MV PELNI KERINCI',  lat:-6.1100, lng:106.8900, sog:0,   cog:270, type:'Passenger',      ts:Date.now() },
-  '525019881': { mmsi:'525019881', name:'MT SPIL NUSANTARA', lat:-6.0800, lng:106.9100, sog:0.1, cog:180, type:'Container Ship', ts:Date.now() },
-  '563012340': { mmsi:'563012340', name:'MV ORIENTAL RUBY',  lat:-5.9200, lng:106.8800, sog:5.2, cog:220, type:'Bulk Carrier',   ts:Date.now() },
-  '563099112': { mmsi:'563099112', name:'MT SINGAPORE STAR', lat:-6.1500, lng:106.8200, sog:3.1, cog:15,  type:'Oil Tanker',     ts:Date.now() },
-  '525031440': { mmsi:'525031440', name:'MV MULIA MAS',      lat:-6.0300, lng:106.9300, sog:0,   cog:90,  type:'General Cargo',  ts:Date.now() },
-  '525044120': { mmsi:'525044120', name:'MT CILACAP',        lat:-6.0650, lng:106.8450, sog:0,   cog:180, type:'Oil Tanker',     ts:Date.now() },
+// Logger
+function log(msg,col){
+  const t=new Date();
+  const ts=`${t.getHours().toString().padStart(2,'0')}:${t.getMinutes().toString().padStart(2,'0')}:${t.getSeconds().toString().padStart(2,'0')}`;
+  logLines.unshift({ts,msg,col:col||'rgba(200,220,255,0.5)'});
+  if(logLines.length>30) logLines.pop();
+  const el=document.getElementById('dbg');
+  el.innerHTML=logLines.map((l,i)=>`<div style="color:${i===0?l.col:'rgba(200,220,255,0.3)'}">[${l.ts}] ${l.msg}</div>`).join('');
+  console.log(`[NETREYE ${ts}] ${msg}`);
+}
+function toggleDbg(){ const el=document.getElementById('dbg'); el.style.display=el.style.display==='none'?'block':'none'; }
+
+// Demo vessels (real data from ShipInfo.net March 2026)
+const DEMO={
+  '525016160':{mmsi:'525016160',name:'TANTO CAHAYA',lat:-6.0187,lng:106.8955,sog:0,cog:0,type:'Container Ship',ts:Date.now()},
+  '525025082':{mmsi:'525025082',name:'MERATUS GORONTALO',lat:-5.9953,lng:106.9128,sog:0,cog:304,type:'Container Ship',ts:Date.now()},
+  '525018443':{mmsi:'525018443',name:'MV SINAR MEDAN',lat:-5.8820,lng:106.9200,sog:2.4,cog:195,type:'Bulk Carrier',ts:Date.now()},
+  '525100234':{mmsi:'525100234',name:'MT PERTAMINA 008',lat:-6.0500,lng:106.8300,sog:0,cog:45,type:'Oil Tanker',ts:Date.now()},
+  '525022771':{mmsi:'525022771',name:'MV CARAKA JAYA',lat:-6.0900,lng:106.8750,sog:0.1,cog:90,type:'General Cargo',ts:Date.now()},
+  '525099017':{mmsi:'525099017',name:'UNKNOWN VESSEL',lat:-6.0200,lng:106.8600,sog:0,cog:0,type:'Unknown',ts:Date.now()-14400000,dark:true},
+  '525011220':{mmsi:'525011220',name:'MV PELNI KERINCI',lat:-6.1100,lng:106.8900,sog:0,cog:270,type:'Passenger',ts:Date.now()},
+  '563012340':{mmsi:'563012340',name:'MV ORIENTAL RUBY',lat:-5.9200,lng:106.8800,sog:5.2,cog:220,type:'Bulk Carrier',ts:Date.now()},
+  '563099112':{mmsi:'563099112',name:'MT SINGAPORE STAR',lat:-6.1500,lng:106.8200,sog:3.1,cog:15,type:'Oil Tanker',ts:Date.now()},
+  '525031440':{mmsi:'525031440',name:'MV MULIA MAS',lat:-6.0300,lng:106.9300,sog:0,cog:90,type:'General Cargo',ts:Date.now()},
 };
 
-const SHIP_TYPES = {
-  70:'Cargo',71:'Cargo',72:'Cargo',73:'Cargo',74:'Cargo',
-  80:'Tanker',81:'Tanker',82:'Tanker',83:'Tanker',84:'Tanker',
-  60:'Passenger',61:'Passenger',69:'Passenger',
-  30:'Fishing',37:'Pleasure',50:'Pilot',51:'SAR',52:'Tug',55:'Law Enforcement',
-  0:'Unknown'
-};
-function shipType(t){ return SHIP_TYPES[t] || (t ? `Type-${t}` : 'Unknown'); }
-
-// ─── COLOR & STATUS HELPERS ──────────────────────────────────────────────
-function vesselColor(v){
-  if(v.dark) return '#ff4040';
-  if(v.sog > 1) return '#00c8ff';
-  if(v.sog > 0.3) return '#ffaa00';
-  return '#00c850';
-}
-function vesselSize(v){
-  if(v.dark) return 0.5;
-  return v.sog > 1 ? 0.35 : 0.28;
-}
-function statusBadge(v){
-  if(v.dark) return '<span class="vbadge bd">⚠ DARK</span>';
-  if(v.sog > 1) return `<span class="vbadge bm">MOVING ${v.sog.toFixed(1)}kn</span>`;
-  if(v.sog > 0.3) return `<span class="vbadge ba">SLOW ${v.sog.toFixed(1)}kn</span>`;
-  return '<span class="vbadge bs">STOPPED</span>';
+const STYPES={70:'Cargo',71:'Cargo',72:'Cargo',73:'Cargo',74:'Cargo',80:'Tanker',81:'Tanker',82:'Tanker',83:'Tanker',60:'Passenger',61:'Passenger',30:'Fishing',50:'Pilot',51:'SAR',52:'Tug',55:'Law Enforcement'};
+function stype(t){ return STYPES[parseInt(t)]||(t?`Type-${t}`:'Unknown'); }
+function vcol(v){ if(v.dark)return'#ff4040'; if(v.sog>1)return'#00c8ff'; if(v.sog>0.3)return'#ffaa00'; return'#00c850'; }
+function vsz(v){ if(v.dark)return 0.5; return v.sog>1?0.35:0.28; }
+function badge(v){
+  if(v.dark)return'<span class="vbadge bd">⚠ DARK</span>';
+  if(v.sog>1)return`<span class="vbadge bm">MOVING ${v.sog.toFixed(1)}kn</span>`;
+  if(v.sog>0.3)return`<span class="vbadge ba">SLOW ${v.sog.toFixed(1)}kn</span>`;
+  return'<span class="vbadge bs">STOPPED</span>';
 }
 
-// ─── GLOBE INIT ──────────────────────────────────────────────────────────
+function setConn(state){
+  const dot=document.getElementById('conn-dot'), lbl=document.getElementById('conn-label');
+  const S={demo:['#ffaa00','3s','DEMO MODE'],conn:['#ffaa00','0.8s','CONNECTING...'],live:['#00c850','1.5s','LIVE AIS'],err:['#ff4040','none','ERROR'],rec:['#ff6060','0.5s','RECONNECTING...']};
+  const [c,s,l]=S[state]||S.demo;
+  dot.style.cssText=`background:${c};border-radius:50%;width:5px;height:5px;animation:${s==='none'?'none':`pulse ${s} infinite`}`;
+  lbl.textContent=l;
+}
+
 function initGlobe(){
-  globe = Globe()(document.getElementById('globe-container'))
+  globe=Globe()(document.getElementById('globe-container'))
     .globeImageUrl('//unpkg.com/three-globe/example/img/earth-night.jpg')
     .bumpImageUrl('//unpkg.com/three-globe/example/img/earth-topology.png')
     .backgroundColor('#050d1a')
-    .pointsData([])
-    .pointLat('lat').pointLng('lng')
-    .pointColor('color').pointRadius('size').pointAltitude(0.002)
-    .pointLabel(d => `
-      <div style="background:rgba(5,13,26,0.95);border:1px solid rgba(0,200,255,0.3);
-        padding:8px 12px;border-radius:3px;font-family:'Courier New',monospace;min-width:160px;">
-        <div style="font-size:11px;font-weight:bold;color:${d.color};margin-bottom:3px;">${d.name||d.mmsi}</div>
-        <div style="font-size:9px;color:rgba(200,220,255,0.5);">MMSI: ${d.mmsi}</div>
-        <div style="font-size:9px;color:rgba(200,220,255,0.5);">${d.type} · SOG: ${(d.sog||0).toFixed(1)} kn · COG: ${d.cog||0}°</div>
-        <div style="font-size:9px;color:rgba(200,220,255,0.5);">${d.lat.toFixed(4)}, ${d.lng.toFixed(4)}</div>
-      </div>`)
+    .pointsData([]).pointLat('lat').pointLng('lng').pointColor('color').pointRadius('size').pointAltitude(0.002)
+    .pointLabel(d=>`<div style="background:rgba(5,13,26,0.95);border:1px solid ${d.color}44;padding:8px 12px;border-radius:3px;font-family:'Courier New',monospace;">
+      <div style="font-size:11px;font-weight:bold;color:${d.color};margin-bottom:3px;">${d.name||d.mmsi}</div>
+      <div style="font-size:9px;color:rgba(200,220,255,0.5);">MMSI: ${d.mmsi} · ${d.type}</div>
+      <div style="font-size:9px;color:rgba(200,220,255,0.5);">SOG: ${(d.sog||0).toFixed(1)}kn · COG: ${d.cog||0}° · ${d.lat.toFixed(4)}, ${d.lng.toFixed(4)}</div>
+    </div>`)
     .onPointClick(showDetail)
-    .arcsData([
-      { sLat:-5.88, sLng:106.92, eLat:-6.09, eLng:106.88, col:'rgba(0,200,255,0.35)' },
-      { sLat:-6.15, sLng:106.82, eLat:-6.09, eLng:106.88, col:'rgba(0,200,255,0.25)' },
-    ])
-    .arcStartLat('sLat').arcStartLng('sLng')
-    .arcEndLat('eLat').arcEndLng('eLng')
-    .arcColor('col').arcDashLength(0.3).arcDashGap(0.1)
-    .arcDashAnimateTime(2500).arcStroke(0.4)
-    .ringsData([{ lat:-6.02, lng:106.86, maxR:0.9, propagationSpeed:1, repeatPeriod:1800 }])
-    .ringLat('lat').ringLng('lng').ringMaxRadius('maxR')
-    .ringColor(()=>'rgba(255,60,60,0.55)')
-    .ringPropagationSpeed('propagationSpeed').ringRepeatPeriod('repeatPeriod');
-
-  globe.pointOfView({ lat:-6.09, lng:106.88, altitude:0.8 }, 2000);
-  globe.controls().autoRotate = false;
+    .arcsData([{s:[-5.88,106.92],e:[-6.09,106.88]},{s:[-6.15,106.82],e:[-6.09,106.88]}])
+    .arcStartLat(d=>d.s[0]).arcStartLng(d=>d.s[1]).arcEndLat(d=>d.e[0]).arcEndLng(d=>d.e[1])
+    .arcColor(()=>'rgba(0,200,255,0.25)').arcDashLength(0.3).arcDashGap(0.1).arcDashAnimateTime(2500).arcStroke(0.4)
+    .ringsData([{lat:-6.02,lng:106.86,maxR:0.9,p:1,r:1800}])
+    .ringLat('lat').ringLng('lng').ringMaxRadius('maxR').ringColor(()=>'rgba(255,60,60,0.5)').ringPropagationSpeed('p').ringRepeatPeriod('r');
+  globe.pointOfView({lat:-6.09,lng:106.88,altitude:0.8},2000);
+  globe.controls().autoRotate=false;
 }
 
-// ─── UPDATE GLOBE & UI ───────────────────────────────────────────────────
 function refresh(){
-  const arr = Object.values(vessels).map(v=>({
-    ...v, color:vesselColor(v), size:vesselSize(v)
-  }));
-  if(globe) globe.pointsData(arr);
-
-  const total = arr.length;
-  const moving = arr.filter(v=>v.sog>1).length;
-  const stopped = total - moving;
-  document.getElementById('s-count').textContent = total;
-  document.getElementById('s-moving').textContent = moving;
-  document.getElementById('s-stopped').textContent = stopped;
-  document.getElementById('s-anomaly').textContent = anomalyCount;
-
-  const sorted = [...arr].sort((a,b)=>(b.sog||0)-(a.sog||0)).slice(0,20);
-  document.getElementById('vessel-list').innerHTML = sorted.map(v=>`
+  const arr=Object.values(vessels).map(v=>({...v,color:vcol(v),size:vsz(v)}));
+  globe&&globe.pointsData(arr);
+  const tot=arr.length,mov=arr.filter(v=>v.sog>1).length;
+  document.getElementById('s-count').textContent=tot;
+  document.getElementById('s-moving').textContent=mov;
+  document.getElementById('s-stopped').textContent=tot-mov;
+  document.getElementById('s-anomaly').textContent=anomalyCount;
+  document.getElementById('vessel-list').innerHTML=[...arr].sort((a,b)=>(b.sog||0)-(a.sog||0)).slice(0,20).map(v=>`
     <div class="vrow" onclick="focusV(${v.lat},${v.lng},'${v.mmsi}')">
       <div class="vname">${v.name||v.mmsi}</div>
       <div class="vmeta">MMSI: ${v.mmsi} · ${v.type}</div>
-      ${statusBadge(v)}
+      ${badge(v)}
     </div>`).join('');
 }
 
-function focusV(lat,lng,mmsi){
-  globe && globe.pointOfView({lat,lng,altitude:0.15},800);
-  const v = vessels[mmsi];
-  if(v) showDetail({...v,color:vesselColor(v)});
-}
-
+function focusV(lat,lng,mmsi){ globe&&globe.pointOfView({lat,lng,altitude:0.15},800); const v=vessels[mmsi]; if(v)showDetail({...v,color:vcol(v)}); }
 function showDetail(d){
-  document.getElementById('vd-name').textContent = d.name||d.mmsi;
-  document.getElementById('vd-mmsi').textContent = d.mmsi;
-  document.getElementById('vd-type').textContent = d.type||'Unknown';
-  document.getElementById('vd-sog').textContent = `${(d.sog||0).toFixed(1)} kn`;
-  document.getElementById('vd-cog').textContent = `${d.cog||0}°`;
-  document.getElementById('vd-pos').textContent = `${d.lat.toFixed(4)}, ${d.lng.toFixed(4)}`;
-  const ago = Math.round((Date.now()-(d.ts||Date.now()))/1000);
-  document.getElementById('vd-time').textContent = ago<60?`${ago}s ago`:`${Math.floor(ago/60)}m ago`;
+  document.getElementById('vd-name').textContent=d.name||d.mmsi;
+  document.getElementById('vd-mmsi').textContent=d.mmsi;
+  document.getElementById('vd-type').textContent=d.type||'Unknown';
+  document.getElementById('vd-sog').textContent=`${(d.sog||0).toFixed(1)} kn`;
+  document.getElementById('vd-cog').textContent=`${d.cog||0}°`;
+  document.getElementById('vd-pos').textContent=`${d.lat.toFixed(4)}, ${d.lng.toFixed(4)}`;
+  const ago=Math.round((Date.now()-(d.ts||Date.now()))/1000);
+  document.getElementById('vd-time').textContent=ago<60?`${ago}s ago`:`${Math.floor(ago/60)}m ago`;
   document.getElementById('vd').style.display='block';
 }
 
-// ─── DEMO MODE ───────────────────────────────────────────────────────────
 function startDemo(){
-  vessels = JSON.parse(JSON.stringify(DEMO));
-  document.getElementById('s-source').textContent = 'DEMO · REAL VESSELS';
+  vessels=JSON.parse(JSON.stringify(DEMO));
+  document.getElementById('s-source').textContent='DEMO · REAL VESSELS';
+  log('Demo mode — 10 real vessels (ShipInfo.net Mar 2026)','#00c850');
   refresh();
-
-  // animate moving vessels
   setInterval(()=>{
-    Object.values(vessels).forEach(v=>{
-      if(v.sog>0.5 && !v.dark){
-        const r = (v.cog||0)*Math.PI/180;
-        const spd = v.sog*0.000015;
-        v.lat += Math.cos(r)*spd;
-        v.lng += Math.sin(r)*spd;
-        v.ts = Date.now();
-      }
-    });
+    Object.values(vessels).forEach(v=>{ if(v.sog>0.5&&!v.dark){ const r=(v.cog||0)*Math.PI/180; v.lat+=Math.cos(r)*v.sog*0.000015; v.lng+=Math.sin(r)*v.sog*0.000015; v.ts=Date.now(); } });
     refresh();
-  }, 3000);
-
-  // simulate msg rate
-  setInterval(()=>{
-    msgWindow.push(Date.now());
-    msgWindow = msgWindow.filter(t=>Date.now()-t<60000);
-    document.getElementById('s-rate').textContent = Math.floor(msgWindow.length*2.2);
-    const t = new Date();
-    document.getElementById('s-last').textContent =
-      `${t.getHours().toString().padStart(2,'0')}:${t.getMinutes().toString().padStart(2,'0')}:${t.getSeconds().toString().padStart(2,'0')}`;
-  }, 2500);
-
-  setTimeout(()=>showAlert('⚠ ANOMALY: MMSI 525099017 — AIS SIGNAL LOST 4+ HOURS · ANCHORAGE ZONE'), 4000);
-  setTimeout(()=>runQ(0), 1200);
+  },3000);
+  setInterval(()=>{ msgWindow.push(Date.now()); msgWindow=msgWindow.filter(t=>Date.now()-t<60000); document.getElementById('s-rate').textContent=Math.floor(msgWindow.length*2.2); tickMsg(); },2500);
+  setTimeout(()=>alert2('⚠ ANOMALY: MMSI 525099017 — AIS SIGNAL LOST 4+ HOURS · ANCHORAGE ZONE'),4000);
+  setTimeout(()=>runQ(0),1200);
 }
 
-// ─── LIVE AIS CONNECTION ─────────────────────────────────────────────────
 function connectLive(){
-  const key = document.getElementById('apikey-input').value.trim();
-  if(!key){ alert('Masukkan API key terlebih dahulu.'); return; }
-
+  const key=document.getElementById('apikey-input').value.trim();
+  if(!key){ alert('Masukkan API key.'); return; }
+  apiKey=key;
   closeLivePanel();
+  doWS();
+}
 
-  const dot = document.getElementById('conn-dot');
-  const lbl = document.getElementById('conn-label');
-  dot.className = 'conn-dot';
-  dot.style.background = '#ffaa00';
-  dot.style.animation = 'pulse 0.8s infinite';
-  lbl.textContent = 'CONNECTING...';
+function doWS(){
+  if(reconnectTimer){ clearTimeout(reconnectTimer); reconnectTimer=null; }
+  if(ws){ try{ ws.onopen=ws.onmessage=ws.onerror=ws.onclose=null; ws.close(); }catch(e){} ws=null; }
+  setConn('conn');
+  log('Connecting to wss://stream.aisstream.io/v0/stream...','#ffaa00');
 
-  if(ws){ try{ ws.close(); }catch(e){} }
+  try{ ws=new WebSocket('wss://stream.aisstream.io/v0/stream'); }
+  catch(e){ log('WS create failed: '+e.message,'#ff6060'); setConn('err'); showErr('WebSocket connection failed: '+e.message); return; }
 
-  ws = new WebSocket('wss://stream.aisstream.io/v0/stream');
-
-  ws.onopen = ()=>{
-    isLive = true;
-    dot.className = 'conn-dot dot-live';
-    lbl.textContent = 'LIVE AIS';
-    document.getElementById('s-source').textContent = 'AISSTREAM.IO LIVE';
-
-    const sub = {
-      APIKey: key,
-      BoundingBoxes: [[[-7.5, 105.5], [-4.5, 108.5]]],
-      FilterMessageTypes: ['PositionReport']
+  ws.onopen=()=>{
+    log('Connected! Sending subscription (3s window)...','#00c8ff');
+    // exact format per aisstream.io docs — sent immediately on open
+    const sub={
+      "APIKey": apiKey,
+      "BoundingBoxes": [[[-10.0, 95.0],[10.0, 120.0]]],
+      "FilterMessageTypes": ["PositionReport"]
     };
     ws.send(JSON.stringify(sub));
-    vessels = {}; // clear demo data
+    log('Subscription sent — bbox: SE Asia / Indonesia region','#00c850');
+    setConn('live');
+    isLive=true;
+    document.getElementById('s-source').textContent='AISSTREAM.IO LIVE';
+    vessels={};
     runQ(0);
   };
 
-  ws.onmessage = e => processAIS(e.data);
+  ws.onmessage=e=>{
+    const raw=e.data;
+    // non-JSON keepalive
+    if(!raw.startsWith('{')){ log('Keepalive: '+raw.substring(0,20)); return; }
+    try{
+      const m=JSON.parse(raw);
+      // API error
+      if(m.ERROR){ log('API ERROR: '+m.ERROR,'#ff6060'); setConn('err'); showErr('aisstream.io error: '+m.ERROR); return; }
+      // subscription confirmation — not an error
+      if(m.MessageType==='SubscriptionReport'){ log('Subscription confirmed ✓','#00c850'); return; }
+      if(m.MessageType!=='PositionReport') return;
 
-  ws.onerror = ()=>{
-    dot.className = 'conn-dot dot-err';
-    dot.style.animation = 'none';
-    lbl.textContent = 'ERROR — CHECK KEY';
-    document.getElementById('s-source').textContent = 'DISCONNECTED';
-    isLive = false;
+      const pr=m.Message?.PositionReport; if(!pr) return;
+      const meta=m.MetaData||{};
+      const mmsi=String(pr.UserID||meta.MMSI||''); if(!mmsi||mmsi==='0') return;
+      const lat=parseFloat(pr.Latitude), lng=parseFloat(pr.Longitude);
+      if(isNaN(lat)||isNaN(lng)||lat===0&&lng===0) return;
+
+      // SOG already decoded in knots by aisstream.io (NOT raw AIS 1/10 knots)
+      const sog=parseFloat(pr.Sog)||0;
+      const cog=parseFloat(pr.Cog)||0;
+      const name=(meta.ShipName||'').trim()||vessels[mmsi]?.name||mmsi;
+      const prev=vessels[mmsi];
+      if(prev&&prev.sog>3&&sog<0.3){ anomalyCount++; alert2(`⚠ SPEED ANOMALY: ${name} ${prev.sog.toFixed(1)}kn→${sog.toFixed(1)}kn`); }
+      vessels[mmsi]={mmsi,name,lat,lng,sog,cog,type:stype(pr.Type),ts:Date.now()};
+      msgWindow.push(Date.now()); msgWindow=msgWindow.filter(t=>Date.now()-t<60000);
+      document.getElementById('s-rate').textContent=msgWindow.length;
+      tickMsg(); refresh();
+    }catch(ex){ log('Parse err: '+ex.message); }
   };
 
-  ws.onclose = ()=>{
-    if(isLive){
-      dot.className = 'conn-dot dot-err';
-      dot.style.animation = 'none';
-      lbl.textContent = 'DISCONNECTED';
-      document.getElementById('s-source').textContent = 'DISCONNECTED';
-      isLive = false;
+  ws.onerror=()=>{
+    log('WS error event','#ff6060'); isLive=false; setConn('err');
+    reconnectTimer=setTimeout(()=>{ log('Reconnecting...','#ffaa00'); setConn('rec'); doWS(); },5000);
+  };
+
+  ws.onclose=ev=>{
+    log(`WS closed code=${ev.code} "${ev.reason||''}"`, ev.code===1000?'rgba(200,220,255,0.4)':'#ffaa00');
+    isLive=false;
+    // auth failure — do NOT reconnect
+    if(ev.code===1008||ev.code===4001||ev.code===4002||ev.code===4003){
+      setConn('err'); log('Auth failed — invalid API key','#ff6060');
+      showErr('Invalid API key (code '+ev.code+'). Please check at aisstream.io → Dashboard → API Keys.');
+      apiKey=''; return;
+    }
+    // aisstream.io disconnects every ~2min by design — auto reconnect
+    if(apiKey){
+      setConn('rec');
+      log('Auto-reconnect in 3s (aisstream.io ~2min cycle is normal)','#ffaa00');
+      reconnectTimer=setTimeout(()=>doWS(),3000);
     }
   };
 }
 
-function processAIS(raw){
-  try{
-    const msg = JSON.parse(raw);
-    const type = msg.MessageType;
-
-    // handle error messages from aisstream
-    if(msg.ERROR){ console.warn('aisstream error:', msg.ERROR); return; }
-
-    if(type !== 'PositionReport') return;
-    const r = msg.Message?.PositionReport;
-    const meta = msg.MetaData || {};
-    if(!r) return;
-
-    const mmsi = String(r.UserID || meta.MMSI || '');
-    if(!mmsi || mmsi === '0') return;
-
-    const lat = parseFloat(r.Latitude);
-    const lng = parseFloat(r.Longitude);
-    if(isNaN(lat)||isNaN(lng)) return;
-    if(lat===0&&lng===0) return;
-
-    // SOG: aisstream.io delivers in knots (already decoded, NOT tenths)
-    const sog = parseFloat(r.Sog) || 0;
-    const cog = parseFloat(r.Cog) || 0;
-    const shipTypeCode = parseInt(r.Type) || 0;
-
-    const prev = vessels[mmsi];
-    const name = (meta.ShipName||'').trim() || prev?.name || mmsi;
-
-    // anomaly: vessel was moving, now stopped
-    if(prev && prev.sog > 3 && sog < 0.3){
-      anomalyCount++;
-      showAlert(`⚠ SPEED ANOMALY: ${name} — ${prev.sog.toFixed(1)}kn → ${sog.toFixed(1)}kn`);
-    }
-
-    vessels[mmsi] = { mmsi, name, lat, lng, sog, cog, type: shipType(shipTypeCode), ts: Date.now() };
-
-    msgWindow.push(Date.now());
-    msgWindow = msgWindow.filter(t=>Date.now()-t<60000);
-    document.getElementById('s-rate').textContent = msgWindow.length;
-    const t = new Date();
-    document.getElementById('s-last').textContent =
-      `${t.getHours().toString().padStart(2,'0')}:${t.getMinutes().toString().padStart(2,'0')}:${t.getSeconds().toString().padStart(2,'0')}`;
-
-    refresh();
-  } catch(e){ console.warn('parse error', e); }
-}
-
-// ─── HELPERS ─────────────────────────────────────────────────────────────
-function showAlert(msg){
-  const el = document.getElementById('alert-strip');
-  el.textContent = msg;
-  el.style.display = 'block';
-  setTimeout(()=>{ el.style.display='none'; }, 7000);
-}
-
-function openLivePanel(){
+function showErr(msg){
+  const el=document.getElementById('lp-err');
+  el.textContent=msg; el.style.display='block';
   document.getElementById('live-panel').style.display='flex';
-  setTimeout(()=>document.getElementById('apikey-input').focus(), 100);
-}
-function closeLivePanel(){
-  document.getElementById('live-panel').style.display='none';
 }
 
-// close panel on backdrop click
-document.getElementById('live-panel').addEventListener('click', function(e){
-  if(e.target===this) closeLivePanel();
-});
+function openLivePanel(){ document.getElementById('live-panel').style.display='flex'; setTimeout(()=>document.getElementById('apikey-input').focus(),100); }
+function closeLivePanel(){ document.getElementById('live-panel').style.display='none'; document.getElementById('lp-err').style.display='none'; }
+document.getElementById('live-panel').addEventListener('click',function(e){if(e.target===this)closeLivePanel();});
 
-// ─── AI QUERIES ───────────────────────────────────────────────────────────
-const QUERIES = [
-  {
-    q:'Berapa kapal aktif di Tanjung Priok sekarang dan bagaimana kondisi port?',
-    a:()=>{
-      const arr = Object.values(vessels);
-      const total = arr.length;
-      const moving = arr.filter(v=>v.sog>1).length;
-      const dark = arr.filter(v=>v.dark).length;
-      const src = isLive ? 'data AIS live' : 'data demo';
-      return `Berdasarkan ${src}, terpantau <span class="hl">${total} kapal</span> di area Tanjung Priok.<br><br>
-        ${moving} kapal <span class="hl">bergerak aktif</span>, ${total-moving} berhenti/berlabuh${dark?`, dan <span class="er">${dark} kapal kehilangan sinyal AIS</span>`:''}.<br><br>
-        Port Congestion Index: <span class="wn">MODERATE</span><br>
-        Delay rata-rata: <span class="wn">2 hari</span> · YOR: <span class="hl">40%</span> — aman.`;
-    }
-  },
-  {
-    q:'Apakah ada vessel dengan perilaku anomali yang perlu diinvestigasi?',
-    a:()=>{
-      const dark = Object.values(vessels).filter(v=>v.dark);
-      if(dark.length)
-        return `<span class="er">⚠ ${dark.length} ANOMALI TERDETEKSI</span><br><br>
-          Vessel <span class="hl">${dark[0].name||dark[0].mmsi}</span> kehilangan sinyal AIS lebih dari 4 jam di zona anchorage.<br><br>
-          Koordinat terakhir: ${dark[0].lat.toFixed(4)}, ${dark[0].lng.toFixed(4)}<br><br>
-          Potensi going dark intentional. Rekomendasi: verifikasi via SAR imagery.`;
-      return `Tidak ada anomali signifikan. Semua <span class="hl">${Object.values(vessels).length} kapal</span> menunjukkan pola normal.`;
-    }
-  },
-  {
-    q:'Kapal mana yang paling cepat dan berapa estimasi ETA-nya ke dermaga?',
-    a:()=>{
-      const moving = Object.values(vessels).filter(v=>v.sog>1).sort((a,b)=>b.sog-a.sog);
-      if(!moving.length) return 'Tidak ada kapal bergerak saat ini.';
-      const v = moving[0];
-      const dist = Math.sqrt(Math.pow(v.lat-(-6.09),2)+Math.pow(v.lng-106.88,2))*111;
-      const eta = Math.round(dist/(v.sog*1.852)*60);
-      return `Kapal tercepat: <span class="hl">${v.name||v.mmsi}</span><br><br>
-        SOG: <span class="hl">${v.sog.toFixed(1)} kn</span> · Jarak: ~${dist.toFixed(1)} km<br><br>
-        ETA prediksi: <span class="hl">~${eta} menit</span><br><br>
-        <span style="font-size:9px;color:rgba(200,220,255,0.4);">*Faktor cuaca & antrian belum diperhitungkan</span>`;
-    }
-  }
+function alert2(msg){ const el=document.getElementById('alert-strip'); el.textContent=msg; el.style.display='block'; setTimeout(()=>el.style.display='none',7000); }
+function tickMsg(){ const t=new Date(); document.getElementById('s-last').textContent=`${t.getHours().toString().padStart(2,'0')}:${t.getMinutes().toString().padStart(2,'0')}:${t.getSeconds().toString().padStart(2,'0')}`; }
+
+const QS=[
+  {q:'Berapa kapal aktif di Tanjung Priok sekarang dan bagaimana kondisi port?',a:()=>{ const a=Object.values(vessels),tot=a.length,mov=a.filter(v=>v.sog>1).length,drk=a.filter(v=>v.dark).length; return `Terpantau <span class="hl">${tot} kapal</span> di area${isLive?' (live)':''}.<br><br>${mov} kapal <span class="hl">bergerak</span>, ${tot-mov} berhenti${drk?`, <span class="er">${drk} sinyal hilang</span>`:''}.<br><br>Congestion: <span class="wn">MODERATE</span> · Delay: <span class="wn">2 hari</span> · YOR: <span class="hl">40%</span> aman.`; }},
+  {q:'Apakah ada vessel dengan perilaku anomali?',a:()=>{ const drk=Object.values(vessels).filter(v=>v.dark); if(drk.length)return`<span class="er">⚠ ${drk.length} ANOMALI</span><br><br><span class="hl">${drk[0].name||drk[0].mmsi}</span> kehilangan sinyal 4+ jam di anchorage.<br>Posisi: ${drk[0].lat.toFixed(4)}, ${drk[0].lng.toFixed(4)}<br><br>Rekomendasi: verifikasi via SAR imagery.`; return`Tidak ada anomali. <span class="hl">${Object.values(vessels).length} kapal</span> pola normal.`; }},
+  {q:'Kapal mana yang paling cepat dan berapa ETA ke dermaga?',a:()=>{ const mv=Object.values(vessels).filter(v=>v.sog>1).sort((a,b)=>b.sog-a.sog); if(!mv.length)return'Tidak ada kapal bergerak saat ini.'; const v=mv[0],d=Math.sqrt(Math.pow(v.lat+6.09,2)+Math.pow(v.lng-106.88,2))*111,eta=Math.round(d/(v.sog*1.852)*60); return`Tercepat: <span class="hl">${v.name||v.mmsi}</span><br>SOG: <span class="hl">${v.sog.toFixed(1)} kn</span> · Jarak: ~${d.toFixed(1)} km<br>ETA: <span class="hl">~${eta} menit</span><br><span style="font-size:9px;color:rgba(200,220,255,0.4);">*estimasi kasar</span>`; }},
 ];
+function runQ(i){ document.getElementById('ai-q').textContent=QS[i].q; document.getElementById('ai-r').innerHTML='<span class="acursor"></span>'; setTimeout(()=>document.getElementById('ai-r').innerHTML=QS[i].a(),700); }
 
-function runQ(idx){
-  document.getElementById('ai-q').textContent = QUERIES[idx].q;
-  document.getElementById('ai-r').innerHTML = '<span class="acursor"></span>';
-  setTimeout(()=>{ document.getElementById('ai-r').innerHTML = QUERIES[idx].a(); }, 700);
-}
+function tick(){ const w=new Date(Date.now()+7*3600000),h=w.getUTCHours().toString().padStart(2,'0'),m=w.getUTCMinutes().toString().padStart(2,'0'),s=w.getUTCSeconds().toString().padStart(2,'0'),str=`${h}:${m}:${s} WIB`; document.getElementById('clock').textContent=str; document.getElementById('b-time').textContent=str; }
+setInterval(tick,1000); tick();
 
-// ─── CLOCK ────────────────────────────────────────────────────────────────
-function tick(){
-  const now = new Date();
-  const wib = new Date(now.getTime()+7*3600000);
-  const hh = wib.getUTCHours().toString().padStart(2,'0');
-  const mm = wib.getUTCMinutes().toString().padStart(2,'0');
-  const ss = wib.getUTCSeconds().toString().padStart(2,'0');
-  const str = `${hh}:${mm}:${ss} WIB`;
-  document.getElementById('clock').textContent = str;
-  document.getElementById('b-time').textContent = str;
-}
-setInterval(tick, 1000);
-tick();
-
-// ─── BOOT ─────────────────────────────────────────────────────────────────
-window.addEventListener('load', ()=>{
-  initGlobe();
-  startDemo(); // langsung demo, tidak perlu modal
-});
+window.addEventListener('load',()=>{ initGlobe(); startDemo(); });
 </script>
 </body>
 </html>
